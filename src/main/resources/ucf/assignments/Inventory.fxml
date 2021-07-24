@@ -35,6 +35,7 @@
       <AnchorPane prefHeight="200.0" prefWidth="600.0">
          <children>
             <Button layoutX="-246.0" layoutY="50.0" mnemonicParsing="false" onMouseClicked="#addEntry" prefHeight="33.0" prefWidth="246.0" text="Add" />
+            <TextField layoutX="-246.0" layoutY="24.0" prefHeight="26.0" prefWidth="246.0" promptText="Search by name or serial number" />
             <TableView fx:id="tableView" editable="true" layoutX="-866.0" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="375.0" prefWidth="620.0">
               <columns>
                 <TableColumn fx:id="tColumnValue" onEditStart="#editEntry" prefWidth="155.0" text="Value" />
@@ -42,8 +43,8 @@
                   <TableColumn fx:id="tColumnName" prefWidth="259.0" text="Name" />
               </columns>
             </TableView>
-            <TextField fx:id="ValField" layoutX="-246.0" layoutY="83.0" prefHeight="35.0" prefWidth="246.0" promptText="Value" />
-            <TextField fx:id="snField" layoutX="-246.0" layoutY="117.0" prefHeight="35.0" prefWidth="246.0" promptText="Serial Number" />
+            <TextField fx:id="valField" layoutX="-246.0" layoutY="83.0" prefHeight="35.0" prefWidth="246.0" promptText="Value" />
+            <TextField fx:id="snField" layoutX="-246.0" layoutY="117.0" prefHeight="35.0" prefWidth="246.0" promptText="Serial Number (XXXXXXXXXX)" />
             <TextField fx:id="nameField" layoutX="-246.0" layoutY="152.0" maxHeight="-Infinity" prefHeight="35.0" prefWidth="246.0" promptText="Name" />
          </children>
       </AnchorPane>

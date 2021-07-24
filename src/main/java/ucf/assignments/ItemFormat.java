@@ -4,23 +4,23 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class ItemFormat {
-    private SimpleDoubleProperty value;
+    private SimpleStringProperty value;
     private SimpleStringProperty serialNumber;
     private SimpleStringProperty name;
 
-    ItemFormat(Double value, String serialNumber, String name)
+    ItemFormat(String value, String serialNumber, String name)
     {
-        this.value = new SimpleDoubleProperty(value);
+        this.value = new SimpleStringProperty(value);
         this.serialNumber = new SimpleStringProperty(serialNumber);
         this.name = new SimpleStringProperty(name);
     }
 
-    public double getValue()
+    public String getValue()
     {
         return value.get();
     }
 
-    public void setValue(double val)
+    public void setValue(String val)
     {
         this.value.set(val);
     }
