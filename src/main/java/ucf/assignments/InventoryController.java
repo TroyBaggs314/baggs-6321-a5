@@ -22,6 +22,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import javafx.util.converter.NumberStringConverter;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -524,7 +526,22 @@ public class InventoryController {
 
     private void saveHTML(File file)
     {
-
+        try
+        {
+            Writer writer = new FileWriter(file);
+            writer.write("<html>\n<body>\n<table style=\"width:100%\">\n<tr>\n<th>Value</th>\n<th>Serial Number</th>\n<th>Name</th>\n</tr>");
+            for(int i = 0; i < getArrayList().size();i++)
+            {
+                writer.write("<tr>\n<td>" + getArrayList().get(i).getValue() + "</td>\n" + "<td>" + getArrayList().get(i).getSerialNumber() + "</td>\n" +"<td>" + getArrayList().get(i).getName() + "</td>\n</tr>");
+            }
+            writer.write("</table>\n</body>\n</html>");
+            writer.flush();
+            writer.close();
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
     }
 
     private void saveJSON(File file)
@@ -561,9 +578,18 @@ public class InventoryController {
         }
     }
 
-    private void loadHTML(File file)
-    {
+    private void loadHTML(File file){
 
+        try
+        {
+            Document doc = Jsoup.parse(file, "UTF-8");
+            String str = doc.select("td").text();
+            System.out.println(str.length() + "\t" + str.substring(4,str.length()-5));
+        }
+        catch(Exception e)
+        {
+
+        }
     }
 
     private void loadJSON(File file)
