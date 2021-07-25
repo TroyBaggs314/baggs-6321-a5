@@ -16,6 +16,9 @@ import org.testfx.framework.junit5.ApplicationTest;
 import org.testfx.matcher.control.TableViewMatchers;
 import ucf.assignments.ItemFormat;
 
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
@@ -93,17 +96,83 @@ public class ControllerTests extends ApplicationTest
     }
 
     @Test
-    public void testImport() throws Exception
+    public void testImportTSV() throws Exception
+    {
+        File file = new File("src/main/resources/ucf/assignments/importtest.txt.txt");
+        String fileName = file.getAbsolutePath();
+        clickOn("Import");
+        clickOn("TSV");
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(file.getAbsolutePath());
+        clipboard.setContents(stringSelection, stringSelection);
+        press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
+        push(KeyCode.ENTER);
+        TableView tv = lookup("#tableView").queryTableView();
+        assertEquals(4,tv.getItems().size());
+    }
+
+    @Test
+    public void testImportHTML() throws Exception
+    {
+        File file = new File("src/main/resources/ucf/assignments/importtest.html");
+        String fileName = file.getAbsolutePath();
+        clickOn("Import");
+        clickOn("HTML");
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(file.getAbsolutePath());
+        clipboard.setContents(stringSelection, stringSelection);
+        press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
+        push(KeyCode.ENTER);
+        TableView tv = lookup("#tableView").queryTableView();
+        assertEquals(4,tv.getItems().size());
+    }
+
+    @Test
+    public void testImportJSON() throws Exception
     {
         File file = new File("src/main/resources/ucf/assignments/exporttest.json");
         String fileName = file.getAbsolutePath();
-        clickOn("#userInput").type(KeyCode.S).type(KeyCode.R).type(KeyCode.C).type(KeyCode.SLASH).type(KeyCode.M).type(KeyCode.A).type(KeyCode.I).type(KeyCode.N).type(KeyCode.SLASH).type(KeyCode.R).type(KeyCode.E).type(KeyCode.S).type(KeyCode.O).type(KeyCode.U).type(KeyCode.R).type(KeyCode.C).type(KeyCode.E).type(KeyCode.S).type(KeyCode.SLASH).type(KeyCode.U).type(KeyCode.C).type(KeyCode.F).type(KeyCode.SLASH).type(KeyCode.A).type(KeyCode.S).type(KeyCode.S).type(KeyCode.I).type(KeyCode.G).type(KeyCode.N).type(KeyCode.M).type(KeyCode.E).type(KeyCode.N).type(KeyCode.T).type(KeyCode.S).type(KeyCode.SLASH).type(KeyCode.I).type(KeyCode.M).type(KeyCode.P).type(KeyCode.O).type(KeyCode.R).type(KeyCode.T).type(KeyCode.T).type(KeyCode.E).type(KeyCode.S).type(KeyCode.T);
+        clickOn("Import");
+        clickOn("JSON");
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(file.getAbsolutePath());
+        clipboard.setContents(stringSelection, stringSelection);
+        press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
+        push(KeyCode.ENTER);
+        TableView tv = lookup("#tableView").queryTableView();
+        assertEquals(4,tv.getItems().size());
+    }
 
-        clickOn("#importButton");
-        FxAssert.verifyThat("#accordion", (Accordion acc) ->
-        {
-            String name = acc.getPanes().get(6).getText();
-            return name.equals("title 7");
-        });
+    @Test
+    public void testSorting()
+    {
+        clickOn("#valField").write("34");
+        clickOn("#snField").write("123456789a");
+        clickOn("#nameField").write("Harry");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(2).write("35.0");
+        clickOn("#snField").eraseText(1).write("b");
+        clickOn("#nameField").eraseText(6).write("Joe");
+        clickOn("#addNewEntryButton");
+        clickOn("#snField").eraseText(1).write("c");
+        clickOn("#addNewEntryButton");
+        clickOn("Value");
+        clickOn("Value");
+        clickOn("Serial Number");
+        clickOn("Serial Number");
+        clickOn("Name");
+        clickOn("Name");
+        TableView tv = lookup("#tableView").queryTableView();
+        TableColumn sortColumn = (TableColumn) tv.getSortOrder().get(0);
+        assertEquals("DESCENDING",sortColumn.getSortType().toString());
+    }
+
+    @Test
+    public void testSearch() throws Exception
+    {
+        TableView tv = lookup("#tableView").queryTableView();
+        testAddEntry();
+        clickOn("#searchInputField").write("123456789a");
+        assertEquals(1,tv.getColumns().size());
     }
 }
