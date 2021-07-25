@@ -9,53 +9,59 @@ import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 
 public class ItemFormat implements Comparable<ItemFormat> {
-    private SimpleStringProperty value;
-    private SimpleStringProperty serialNumber;
-    private SimpleStringProperty name;
+    private String value;
+    private String serialNumber;
+    private String name;
 
     ItemFormat(String value, String serialNumber, String name)
     {
-        this.value = new SimpleStringProperty(value);
-        this.serialNumber = new SimpleStringProperty(serialNumber);
-        this.name = new SimpleStringProperty(name);
+        this.value = new String(value);
+        this.serialNumber = new String(serialNumber);
+        this.name = new String(name);
     }
 
     public String getValue()
     {
-        return value.get();
+        return value;
     }
 
     public void setValue(String val)
     {
-        this.value.set(val);
+        this.value = (val);
     }
 
     public String getSerialNumber()
     {
-        return serialNumber.get();
+        return serialNumber;
     }
 
     public void setSerialNumber(String val)
     {
-        this.serialNumber.set(val);
+        this.serialNumber=(val);
     }
     public String getName()
     {
-        return name.get();
+        return name;
     }
 
     public void setName(String val)
     {
-        this.name.set(val);
+        this.name=(val);
     }
 
     @Override
     public int compareTo(ItemFormat compareIF) {
         String compareSN=((ItemFormat)compareIF).getSerialNumber();
         /* For Ascending order*/
-        return (this.serialNumber.get().compareTo(compareSN));
+        return (this.serialNumber.compareTo(compareSN));
 
         /* For Descending order do like this */
         //return compareage-this.studentage;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "value : " + getValue() + ",\nserial_number=" + getSerialNumber() + ", name =" + getName() +"]";
     }
 }

@@ -5,6 +5,8 @@
 
 package ucf.assignments;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.javafx.binding.StringFormatter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,10 +23,7 @@ import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import javafx.util.converter.NumberStringConverter;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.DecimalFormat;
@@ -54,7 +53,7 @@ public class InventoryController {
 
     @FXML
     private TextField searchInputField;
-    private ArrayList<ItemFormat> invList = new ArrayList<ItemFormat>();
+    public ArrayList<ItemFormat> invList = new ArrayList<ItemFormat>();
 
     public void addArrayList(ItemFormat iF)
     {
@@ -460,20 +459,15 @@ public class InventoryController {
         getArrayList().clear();
         if(i == 0)
         {
-            try
-            {
-                Scanner sc = new Scanner(file);
-                do
-                {
-                    ItemFormat iF = new ItemFormat(sc.next(), sc.next(), sc.next());
-                    getArrayList().add(iF);
-                }while(sc.hasNext());
-                addEntry();
-            }
-            catch (Exception e)
-            {
-
-            }
+            loadTSV(file);
+        }
+        else if(i == 1)
+        {
+            loadHTML(file);
+        }
+        else if(i == 2)
+        {
+            loadJSON(file);
         }
     }
 
@@ -500,6 +494,14 @@ public class InventoryController {
         {
             saveTSV(file);
         }
+        else if(i == 1)
+        {
+            saveHTML(file);
+        }
+        else if(i == 2)
+        {
+            saveJSON(file);
+        }
 
     }
 
@@ -520,13 +522,67 @@ public class InventoryController {
         }
     }
 
-    private void saveHTML()
+    private void saveHTML(File file)
     {
 
     }
 
-    private void saveJSON()
+    private void saveJSON(File file)
+    {
+        try
+        {
+            Writer writer = new FileWriter(file);
+            Gson gson = new GsonBuilder().create();
+            gson.toJson(getArrayList(), writer);
+            writer.flush();
+            writer.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println(e);
+        }
+    }
+
+    private void loadTSV(File file)
+    {
+        try
+        {
+            Scanner sc = new Scanner(file);
+            do
+            {
+                ItemFormat iF = new ItemFormat(sc.next(), sc.next(), sc.next());
+                getArrayList().add(iF);
+            }while(sc.hasNext());
+            addEntry();
+        }
+        catch (Exception e)
+        {
+
+        }
+    }
+
+    private void loadHTML(File file)
     {
 
+    }
+
+    private void loadJSON(File file)
+    {
+        Gson gson = new Gson();
+        System.out.println("Trying");
+        try
+        {
+            ItemFormat[] itemArray = gson.fromJson(new FileReader(file),ItemFormat[].class);
+            System.out.println("length: " + itemArray.length);
+            for(int i = 0; i < itemArray.length; i++)
+            {
+                getArrayList().add(itemArray[i]);
+            }
+            addEntry();
+        }
+        catch(Exception e)
+        {
+            System.out.println(e);
+        }
     }
 }
