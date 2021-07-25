@@ -11,19 +11,25 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.FileChooser;
 import javafx.util.Pair;
 import javafx.util.converter.NumberStringConverter;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Optional;
+import java.util.*;
 
 public class InventoryController {
 
@@ -250,27 +256,26 @@ public class InventoryController {
                     break;
                 }
             }
-
-            /*TableColumn sortcolumn = null;
-            TableColumn.SortType st = null;
-            if(tableView.getSortOrder().size() > 0)
-            {
-                sortcolumn = (TableColumn) tableView.getSortOrder().get(0);
-                st = sortcolumn.getSortType();
-                System.out.println(sortcolumn.toString() + "\t" + st.toString());
-            }*/
             addEntry();
         }
+    }
+
+    void clearEntries()
+    {
+        while(getArrayList().size() > 0)
+        {
+            getArrayList().remove(0);
+        }
+        addEntry();
     }
 
     void addEntry()
     {
         final ObservableList<ItemFormat> data = FXCollections.observableArrayList();
-        SortedList sortedList = new SortedList(data);
-
-        DecimalFormat df = new DecimalFormat("#.00");
+        System.out.println(getArrayList().size());
         for(int i = 0; i < getArrayList().size(); i++)
         {
+            System.out.println(getArrayList().get(i));
             data.add(getArrayList().get(i));
         }
         tColumnValue.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("Value"));
@@ -370,12 +375,157 @@ public class InventoryController {
         tableView.getFocusModel().focus(1);
     }
     @FXML
-    void importChoice()
+    void importChoice(MouseEvent actionEvent)
+    {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Import confirmation");
+        alert.setHeaderText("Import a file.");
+        alert.setContentText("Choose file format.");
+
+        ButtonType btn1 = new ButtonType("TSV");
+        ButtonType btn2 = new ButtonType("HTML");
+        ButtonType btn3 = new ButtonType("JSON");
+        ButtonType btn4 = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(btn1,btn2,btn3,btn4);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == btn1)
+        {
+            imports(0,actionEvent);
+        }
+        else if(result.get() == btn2)
+        {
+            imports(1,actionEvent);
+        }
+        else if(result.get() == btn3)
+        {
+            imports(2,actionEvent);
+        }
+    }
+    @FXML
+    void exportChoice(MouseEvent actionEvent)
+    {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle("Export confirmation");
+        alert.setHeaderText("Export to a file.");
+        alert.setContentText("Choose output format.");
+
+        ButtonType btn1 = new ButtonType("TSV");
+        ButtonType btn2 = new ButtonType("HTML");
+        ButtonType btn3 = new ButtonType("JSON");
+        ButtonType btn4 = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        alert.getButtonTypes().setAll(btn1,btn2,btn3,btn4);
+
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == btn1)
+        {
+            export(0,actionEvent);
+        }
+        else if(result.get() == btn2)
+        {
+            export(1,actionEvent);
+        }
+        else if(result.get() == btn3)
+        {
+            export(2,actionEvent);
+        }
+        /*else
+        {
+
+        }*/
+    }
+
+    private void imports(int i, MouseEvent actionEvent)
+    {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load");
+        if(i == 0)
+        {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TSV","*.txt"));
+        }
+        else if(i == 1)
+        {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("HTML","*.html"));
+        }
+        else if(i == 2)
+        {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON","*.json"));
+        }
+        final Node source = (Node) actionEvent.getSource();
+        Scene scene = source.getScene();
+        File file = fileChooser.showOpenDialog(scene.getWindow());
+        clearEntries();
+        getArrayList().clear();
+        if(i == 0)
+        {
+            try
+            {
+                Scanner sc = new Scanner(file);
+                do
+                {
+                    ItemFormat iF = new ItemFormat(sc.next(), sc.next(), sc.next());
+                    getArrayList().add(iF);
+                }while(sc.hasNext());
+                addEntry();
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+    }
+
+    private void export(int i, MouseEvent actionEvent)
+    {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save");
+        if(i == 0)
+        {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("TSV","*.txt"));
+        }
+        else if(i == 1)
+        {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("HTML","*.html"));
+        }
+        else if(i == 2)
+        {
+            fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter("JSON","*.json"));
+        }
+        final Node source = (Node) actionEvent.getSource();
+        Scene scene = source.getScene();
+        File file = fileChooser.showOpenDialog(scene.getWindow());
+        if(i == 0)
+        {
+            saveTSV(file);
+        }
+
+    }
+
+    private void saveTSV(File file)
+    {
+        try {
+            BufferedWriter wr = Files.newBufferedWriter(file.toPath());
+            for(int i = 0; i < getArrayList().size(); i++)
+            {
+                System.out.println(getArrayList().get(i).getValue() +"\t" + getArrayList().get(i).getSerialNumber()  +"\t" + getArrayList().get(i).getName() + "\n");
+                wr.write(getArrayList().get(i).getValue() +"\t" + getArrayList().get(i).getSerialNumber()  +"\t" + getArrayList().get(i).getName() + "\n");
+            }
+            wr.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Failed export");
+        }
+    }
+
+    private void saveHTML()
     {
 
     }
-    @FXML
-    void exportChoice()
+
+    private void saveJSON()
     {
 
     }
