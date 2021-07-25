@@ -8,21 +8,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
-import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
-import org.testfx.api.FxAssert;
 import org.testfx.framework.junit5.ApplicationTest;
-import org.testfx.matcher.control.TableViewMatchers;
-import ucf.assignments.ItemFormat;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -93,6 +86,99 @@ public class ControllerTests extends ApplicationTest
         clickOn("#nameField").write("");
         clickOn("#addNewEntryButton");
         clickOn("OK");
+    }
+
+    @Test
+    public void testExportTSV() throws Exception
+    {
+        clickOn("#valField").write("34");
+        clickOn("#snField").write("123456789a");
+        clickOn("#nameField").write("Harry");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(2).write("35.0");
+        clickOn("#snField").eraseText(1).write("b");
+        clickOn("#nameField").eraseText(6).write("Joe");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(4).write("36.00");
+        clickOn("#snField").eraseText(1).write("c");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(5).write("37");
+        clickOn("#snField").eraseText(1).write("d");
+        clickOn("#nameField").eraseText(6).write("Joseph");
+        clickOn("#addNewEntryButton");
+        File file = new File("src/main/resources/ucf/assignments/importtest.txt.txt");
+        String fileName = file.getAbsolutePath();
+        clickOn("Export");
+        clickOn("TSV");
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(file.getAbsolutePath());
+        clipboard.setContents(stringSelection, stringSelection);
+        press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
+        push(KeyCode.ENTER);
+        TableView tv = lookup("#tableView").queryTableView();
+        assertEquals(4,tv.getItems().size());
+    }
+
+    @Test
+    public void testExportHTML() throws Exception
+    {
+        clickOn("#valField").write("34");
+        clickOn("#snField").write("123456789a");
+        clickOn("#nameField").write("Harry");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(2).write("35.0");
+        clickOn("#snField").eraseText(1).write("b");
+        clickOn("#nameField").eraseText(6).write("Joe");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(4).write("36.00");
+        clickOn("#snField").eraseText(1).write("c");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(5).write("37");
+        clickOn("#snField").eraseText(1).write("d");
+        clickOn("#nameField").eraseText(6).write("Joseph");
+        clickOn("#addNewEntryButton");
+        File file = new File("src/main/resources/ucf/assignments/importtest.html");
+        String fileName = file.getAbsolutePath();
+        clickOn("Export");
+        clickOn("HTML");
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(file.getAbsolutePath());
+        clipboard.setContents(stringSelection, stringSelection);
+        press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
+        push(KeyCode.ENTER);
+        TableView tv = lookup("#tableView").queryTableView();
+        assertEquals(4,tv.getItems().size());
+    }
+
+    @Test
+    public void testExportJSON() throws Exception
+    {
+        clickOn("#valField").write("34");
+        clickOn("#snField").write("123456789a");
+        clickOn("#nameField").write("Harry");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(2).write("35.0");
+        clickOn("#snField").eraseText(1).write("b");
+        clickOn("#nameField").eraseText(6).write("Joe");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(4).write("36.00");
+        clickOn("#snField").eraseText(1).write("c");
+        clickOn("#addNewEntryButton");
+        clickOn("#valField").eraseText(5).write("37");
+        clickOn("#snField").eraseText(1).write("d");
+        clickOn("#nameField").eraseText(6).write("Joseph");
+        clickOn("#addNewEntryButton");
+        File file = new File("src/main/resources/ucf/assignments/exporttest.json");
+        String fileName = file.getAbsolutePath();
+        clickOn("Export");
+        clickOn("JSON");
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection stringSelection = new StringSelection(file.getAbsolutePath());
+        clipboard.setContents(stringSelection, stringSelection);
+        press(KeyCode.CONTROL).press(KeyCode.V).release(KeyCode.V).release(KeyCode.CONTROL);
+        push(KeyCode.ENTER);
+        TableView tv = lookup("#tableView").queryTableView();
+        assertEquals(4,tv.getItems().size());
     }
 
     @Test
@@ -173,6 +259,6 @@ public class ControllerTests extends ApplicationTest
         TableView tv = lookup("#tableView").queryTableView();
         testAddEntry();
         clickOn("#searchInputField").write("123456789a");
-        assertEquals(1,tv.getColumns().size());
+        assertEquals(1,tv.getItems().size());
     }
 }

@@ -217,7 +217,6 @@ public class InventoryController {
             {
                 return false;
             }
-            //System.out.println(getArrayList().get(i).getSerialNumber() + "!=" + str);
         }
         return true;
     }
@@ -275,10 +274,8 @@ public class InventoryController {
     void addEntry()
     {
         final ObservableList<ItemFormat> data = FXCollections.observableArrayList();
-        System.out.println(getArrayList().size());
         for(int i = 0; i < getArrayList().size(); i++)
         {
-            System.out.println(getArrayList().get(i));
             data.add(getArrayList().get(i));
         }
         tColumnValue.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("Value"));
@@ -511,7 +508,6 @@ public class InventoryController {
             BufferedWriter wr = Files.newBufferedWriter(file.toPath());
             for(int i = 0; i < getArrayList().size(); i++)
             {
-                System.out.println(getArrayList().get(i).getValue() +"\t" + getArrayList().get(i).getSerialNumber()  +"\t" + getArrayList().get(i).getName() + "\n");
                 wr.write(getArrayList().get(i).getValue() +"\t" + getArrayList().get(i).getSerialNumber()  +"\t" + getArrayList().get(i).getName() + "\n");
             }
             wr.close();
@@ -586,13 +582,10 @@ public class InventoryController {
             System.out.println(ele.size());
             for(int i = 0; i < (ele.size()/3); i++)
             {
-                System.out.println(ele.get(j).text() + "\t" + ele.get(j + 1).text() + "\t" + ele.get(j + 2).text());
                 ItemFormat iF = new ItemFormat(ele.get(j).text(),ele.get(j + 1).text(),ele.get(j + 2).text());
                 getArrayList().add(iF);
                 j+= 3;
-                System.out.println("Done");
             }
-            System.out.println("Calling addEntry");
             addEntry();
         }
         catch(Exception e)
@@ -604,11 +597,9 @@ public class InventoryController {
     private void loadJSON(File file)
     {
         Gson gson = new Gson();
-        System.out.println("Trying");
         try
         {
             ItemFormat[] itemArray = gson.fromJson(new FileReader(file),ItemFormat[].class);
-            System.out.println("length: " + itemArray.length);
             for(int i = 0; i < itemArray.length; i++)
             {
                 getArrayList().add(itemArray[i]);
