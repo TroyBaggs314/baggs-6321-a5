@@ -20,6 +20,8 @@ import javafx.util.converter.NumberStringConverter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Optional;
 
 public class InventoryController {
@@ -39,7 +41,12 @@ public class InventoryController {
     @FXML
     private TextField nameField;
     @FXML
-    private MenuItem addNewEntryButton;
+    private Button addNewEntryButton;
+    @FXML
+    private Button removeEntryButton;
+
+    @FXML
+    private TextField searchInputField;
     private ArrayList<ItemFormat> invList = new ArrayList<ItemFormat>();
 
     public void addArrayList(ItemFormat iF)
@@ -71,7 +78,18 @@ public class InventoryController {
             alert.showAndWait();
             return;
         }
-        addArrayList(new ItemFormat(df.format(Double.parseDouble(valField.getText())),snField.getText(),nameField.getText()));
+        else if(verifySerialNumber(snField.getText(),0).equals("Bad format"))
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Wrong format entered, try again.",ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+        Button btn = (Button)actionEvent.getSource();
+        System.out.println(btn.getId());
+        if(btn.getId().equals("addNewEntryButton"))
+        {
+            addArrayList(new ItemFormat(df.format(Double.parseDouble(valField.getText())), snField.getText(), nameField.getText()));
+        }
         for(int i = 0; i < getArrayList().size(); i++)
         {
             data.add(getArrayList().get(i));
@@ -113,19 +131,6 @@ public class InventoryController {
                             str = result.get();
                         }
                     }
-                    /*if(event.getNewValue().length() != 10)
-                    {
-
-                        iF.setSerialNumber("Format bad");
-                    }
-                    else if(verifySerialNumber(event.getNewValue()) == false)
-                    {
-                        iF.setSerialNumber("Format bad");
-                    }
-                    else
-                    {
-                        iF.setSerialNumber(event.getNewValue());
-                    }*/
                     iF.setSerialNumber(str);
                     tableView.refresh();
                 }
@@ -188,7 +193,7 @@ public class InventoryController {
             {
                 return false;
             }
-            System.out.println(getArrayList().get(i).getSerialNumber() + "!=" + str);
+            //System.out.println(getArrayList().get(i).getSerialNumber() + "!=" + str);
         }
         return true;
     }
@@ -209,5 +214,42 @@ public class InventoryController {
     void editEntry()
     {
         editFocusedCell();
+    }
+
+    @FXML
+    void removeEntry(MouseEvent actionEvent)
+    {
+        if(tableView.getSelectionModel().getFocusedIndex() != -1)
+        {
+            getArrayList().remove(tableView.getSelectionModel().getFocusedIndex());
+            addEntry(actionEvent);
+        }
+    }
+
+    @FXML
+    void searchEntries()
+    {
+        if(!searchInputField.getText().isEmpty())
+        {
+            System.out.println(searchInputField.getText());
+            for(int i = 0; i < getArrayList().size(); i++)
+            {
+                if(searchInputField.getText().length() == 10)
+                {
+                    //System.out.println(searchInputField.getText() + " ?= " + getArrayList().get(i).getSerialNumber());
+                    if(searchInputField.getText().equals(getArrayList().get(i).getSerialNumber()))
+                    {
+                        focusTableCell(i);
+                    }
+                }
+            }
+        }
+    }
+    private void focusTableCell(int i)
+    {
+        tableView.getSelectionModel().clearSelection();
+        tableView.requestFocus();
+        tableView.getSelectionModel().select(i);
+        tableView.getFocusModel().focus(1);
     }
 }

@@ -8,7 +8,7 @@ package ucf.assignments;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 
-public class ItemFormat {
+public class ItemFormat implements Comparable<ItemFormat> {
     private SimpleStringProperty value;
     private SimpleStringProperty serialNumber;
     private SimpleStringProperty name;
@@ -47,5 +47,15 @@ public class ItemFormat {
     public void setName(String val)
     {
         this.name.set(val);
+    }
+
+    @Override
+    public int compareTo(ItemFormat compareIF) {
+        String compareSN=((ItemFormat)compareIF).getSerialNumber();
+        /* For Ascending order*/
+        return (this.serialNumber.get().compareTo(compareSN));
+
+        /* For Descending order do like this */
+        //return compareage-this.studentage;
     }
 }
