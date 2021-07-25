@@ -13,7 +13,7 @@ public class ItemFormat implements Comparable<ItemFormat> {
     private String serialNumber;
     private String name;
 
-    ItemFormat(String value, String serialNumber, String name)
+    public ItemFormat(String value, String serialNumber, String name)
     {
         this.value = new String(value);
         this.serialNumber = new String(serialNumber);

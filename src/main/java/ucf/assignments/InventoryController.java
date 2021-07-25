@@ -79,6 +79,12 @@ public class InventoryController {
     @FXML
     void addEntry(MouseEvent actionEvent)
     {
+        /*addEntry: create an entirely new observablearraylist for the table viewer to base off
+        create an entirely new one to remove any chances of duplicate cells being created or misplaced
+        verify that cell being added follows the guidelines and if they don't throw an error and return
+        if verified implement listeners for edits in each column
+        at the end make the table editable by calling tableEditable()
+        */
         final ObservableList<ItemFormat> data = FXCollections.observableArrayList();
         DecimalFormat df = new DecimalFormat("#.00");
         if(verifySerialNumber(snField.getText(),0).equals("Duplicate."))
@@ -118,7 +124,6 @@ public class InventoryController {
         for(int i = 0; i < sortedList.size(); i++)
         {
             ItemFormat iF = (ItemFormat)sortedList.get(i);
-            System.out.println(iF.getSerialNumber());
         }
         tColumnValue.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("Value"));
         tColumnSerial.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("SerialNumber"));
@@ -180,6 +185,9 @@ public class InventoryController {
 
     private String verifySerialNumber(String str, int j)
     {
+        // measly check for first serial length is 10
+        // second it is unique and doesn't match any of the current ones
+        // and third that it contains only letters and digits
         if(str.length() != 10)
         {
             return "Bad format";
@@ -235,6 +243,11 @@ public class InventoryController {
     @FXML
     void removeEntry(MouseEvent actionEvent)
     {
+        //if user clicks remove, verify that something is focused
+        //then loop through array for matching serial and delete
+            //must do it from serial of array and not vice versa because when tables sort,
+            // its only the visible list and the index is unchanged
+            // and will select the wrong one
         if(tableView.getSelectionModel().getFocusedIndex() != -1)
         {
             for(int i = 0; i < getArrayList().size(); i++)
@@ -421,10 +434,6 @@ public class InventoryController {
         {
             export(2,actionEvent);
         }
-        /*else
-        {
-
-        }*/
     }
 
     private void imports(int i, MouseEvent actionEvent)
