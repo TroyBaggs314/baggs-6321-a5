@@ -3,11 +3,11 @@
 
 # //README//
 ### Add:
-  To Add an item to your inventory enter a value in USD, a unique and valid 10 digit combination of the roman characters or numbers, and a name.
+  To add an item to your inventory enter a value in USD, a unique and valid 10 digit combination of the roman characters or numbers, and a name.
 ### Remove:
-  To Remove click on a entry and hit "Remove".
+  To remove click on a entry and hit "Remove".
 ### Edit:
-  To Edit, click on a cell and type in the new value/number*/name. 
+  To edit, click on a cell and type in the new value/number*/name. 
   *Serial Numbers must still follow a 10 digits roman character or digit format
 ### Import list:
   To import an existing list, click on "Import" and choose an extension type (either TSV, HTML, or JSON) to bring up file explorer to locate the file.
