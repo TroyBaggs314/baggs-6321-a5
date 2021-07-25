@@ -24,6 +24,7 @@ import javafx.util.Pair;
 import javafx.util.converter.NumberStringConverter;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -175,18 +176,6 @@ public class InventoryController {
         tableView.setItems(sortedList);
         sortedList.comparatorProperty().bind(tableView.comparatorProperty());
         setTableEditable();
-    }
-
-    private boolean verifySerialNumber(String str)
-    {
-        for(int i = 0; i < 10; i++)
-        {
-            if((Character.isLetterOrDigit(str.charAt(i)) == false))
-            {
-                return false;
-            }
-        }
-        return true;
     }
 
     private String verifySerialNumber(String str, int j)
@@ -583,12 +572,23 @@ public class InventoryController {
         try
         {
             Document doc = Jsoup.parse(file, "UTF-8");
-            String str = doc.select("td").text();
-            System.out.println(str.length() + "\t" + str.substring(4,str.length()-5));
+            Elements ele = doc.select("td");
+            int j = 0;
+            System.out.println(ele.size());
+            for(int i = 0; i < (ele.size()/3); i++)
+            {
+                System.out.println(ele.get(j).text() + "\t" + ele.get(j + 1).text() + "\t" + ele.get(j + 2).text());
+                ItemFormat iF = new ItemFormat(ele.get(j).text(),ele.get(j + 1).text(),ele.get(j + 2).text());
+                getArrayList().add(iF);
+                j+= 3;
+                System.out.println("Done");
+            }
+            System.out.println("Calling addEntry");
+            addEntry();
         }
         catch(Exception e)
         {
-
+            System.out.println(e);
         }
     }
 

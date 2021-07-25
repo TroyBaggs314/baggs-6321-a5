@@ -1,11 +1,56 @@
 @startuml
 'https://plantuml.com/sequence-diagram
 
-autonumber
 
-Alice -> Bob: Authentication Request
-Bob --> Alice: Authentication Response
+class Inventory
+{
+    main()
+    start()
+}
 
-Alice -> Bob: Another authentication Request
-Alice <-- Bob: another authentication Response
+class InventoryController
+{
+    addEntry(MouseEvent)
+    verifySerialNumber(String, int)
+    checkUniqueSerial(String)
+    editFocusedCell()
+    setTableEditable()
+    editEntry()
+    removeEntry()
+    clearEntries()
+    addEntry()
+    searchEntries()
+    searchName(int)
+    focusTableCell(int)
+    importChoice(MouseEvent)
+    exportChoice(MouseEvent)
+    imports(int,MouseEvent)
+    export(int,MouseEvent)
+    saveTSV(File)
+    saveHTML(File)
+    saveJSON(File)
+    loadTSV(File)
+    loadHTML(File)
+    loadJSON(File)
+    'needs readme.md'
+}
+
+class itemFormat
+{
+    value
+    serialNumber
+    name
+    getValue()
+    setValue()
+    getSerialNumber()
+    setSerialNumber()
+    getName()
+    setName()
+}
+
+javafx.Application <|-- Inventory
+Inventory - InventoryController
+Inventory - itemFormat
+itemFormat - InventoryController
+
 @enduml
