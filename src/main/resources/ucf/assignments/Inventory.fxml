@@ -29,21 +29,21 @@
       </MenuBar>
       <AnchorPane prefHeight="200.0" prefWidth="600.0">
          <children>
-            <Button layoutX="-866.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Import" />
+            <Button layoutX="-866.0" mnemonicParsing="false" onMouseClicked="#importChoice" prefHeight="25.0" prefWidth="79.0" text="Import" />
             <Button fx:id="addNewEntryButton" layoutX="-246.0" layoutY="50.0" mnemonicParsing="false" onMouseClicked="#addEntry" prefHeight="33.0" prefWidth="246.0" text="Add" />
             <TextField fx:id="searchInputField" layoutX="-246.0" layoutY="24.0" onKeyTyped="#searchEntries" prefHeight="26.0" prefWidth="246.0" promptText="Search by name or serial number" />
-            <TableView fx:id="tableView" editable="true" layoutX="-866.0" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="375.0" prefWidth="620.0">
+            <TableView fx:id="tableView" layoutX="-866.0" layoutY="25.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="375.0" prefWidth="620.0">
               <columns>
                 <TableColumn fx:id="tColumnValue" onEditStart="#editEntry" prefWidth="155.0" text="Value" />
                 <TableColumn fx:id="tColumnSerial" prefWidth="204.0" text="Serial Number" />
-                  <TableColumn fx:id="tColumnName" prefWidth="259.0" text="Name" />
+                  <TableColumn fx:id="tColumnName" prefWidth="259.0" resizable="false" text="Name" />
               </columns>
             </TableView>
             <TextField fx:id="valField" layoutX="-246.0" layoutY="83.0" prefHeight="35.0" prefWidth="246.0" promptText="Value" />
             <TextField fx:id="snField" layoutX="-246.0" layoutY="117.0" prefHeight="35.0" prefWidth="246.0" promptText="Serial Number (XXXXXXXXXX)" />
             <TextField fx:id="nameField" layoutX="-246.0" layoutY="152.0" maxHeight="-Infinity" prefHeight="35.0" prefWidth="246.0" promptText="Name" />
-            <Button layoutX="-787.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="79.0" text="Export" />
-            <Button fx:id="removeEntryButton" layoutX="-708.0" mnemonicParsing="false" onMouseMoved="#removeEntry" prefHeight="25.0" prefWidth="79.0" text="Remove" />
+            <Button layoutX="-787.0" mnemonicParsing="false" onMouseClicked="#exportChoice" prefHeight="25.0" prefWidth="79.0" text="Export" />
+            <Button fx:id="removeEntryButton" layoutX="-708.0" mnemonicParsing="false" onMousePressed="#removeEntry" prefHeight="25.0" prefWidth="79.0" text="Remove" />
          </children>
       </AnchorPane>
    </children>

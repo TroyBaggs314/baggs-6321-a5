@@ -8,6 +8,7 @@ package ucf.assignments;
 import com.sun.javafx.binding.StringFormatter;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -84,8 +85,19 @@ public class InventoryController {
             alert.showAndWait();
             return;
         }
+        else if(valField.getText().isEmpty())
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid value entered, try again.",ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
+        else if(nameField.getText().isEmpty())
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR, "Invalid name entered, try again.",ButtonType.OK);
+            alert.showAndWait();
+            return;
+        }
         Button btn = (Button)actionEvent.getSource();
-        System.out.println(btn.getId());
         if(btn.getId().equals("addNewEntryButton"))
         {
             addArrayList(new ItemFormat(df.format(Double.parseDouble(valField.getText())), snField.getText(), nameField.getText()));
@@ -93,6 +105,12 @@ public class InventoryController {
         for(int i = 0; i < getArrayList().size(); i++)
         {
             data.add(getArrayList().get(i));
+        }
+        SortedList sortedList = new SortedList(data);
+        for(int i = 0; i < sortedList.size(); i++)
+        {
+            ItemFormat iF = (ItemFormat)sortedList.get(i);
+            System.out.println(iF.getSerialNumber());
         }
         tColumnValue.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("Value"));
         tColumnSerial.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("SerialNumber"));
@@ -119,16 +137,17 @@ public class InventoryController {
                 {
                     ItemFormat iF = event.getRowValue();
                     String str = event.getNewValue();
-                    while(!verifySerialNumber(str, 0).equals(str))
+                    if(!event.getNewValue().equals(event.getOldValue()))
                     {
-                        TextInputDialog alert = new TextInputDialog("XXXXXXXXXX");
-                        alert.setTitle("Invalid Serial Number");
-                        alert.setHeaderText("Invalid serial number entered");
-                        alert.setContentText("Please enter a valid serial number");
-                        Optional<String> result = alert.showAndWait();
-                        if(result.isPresent())
-                        {
-                            str = result.get();
+                        while (!verifySerialNumber(str, 0).equals(str)) {
+                            TextInputDialog alert = new TextInputDialog("XXXXXXXXXX");
+                            alert.setTitle("Invalid Serial Number");
+                            alert.setHeaderText("Invalid serial number entered");
+                            alert.setContentText("Please enter a valid serial number");
+                            Optional<String> result = alert.showAndWait();
+                            if (result.isPresent()) {
+                                str = result.get();
+                            }
                         }
                     }
                     iF.setSerialNumber(str);
@@ -146,7 +165,8 @@ public class InventoryController {
                 }
             }
         );
-        tableView.setItems(data);
+        tableView.setItems(sortedList);
+        sortedList.comparatorProperty().bind(tableView.comparatorProperty());
         setTableEditable();
     }
 
@@ -221,9 +241,92 @@ public class InventoryController {
     {
         if(tableView.getSelectionModel().getFocusedIndex() != -1)
         {
-            getArrayList().remove(tableView.getSelectionModel().getFocusedIndex());
-            addEntry(actionEvent);
+            for(int i = 0; i < getArrayList().size(); i++)
+            {
+                ItemFormat iF = (ItemFormat) tableView.getItems().get(tableView.getSelectionModel().getFocusedIndex());
+                if(getArrayList().get(i).getSerialNumber().equals(iF.getSerialNumber()))
+                {
+                    getArrayList().remove(i);
+                    break;
+                }
+            }
+
+            /*TableColumn sortcolumn = null;
+            TableColumn.SortType st = null;
+            if(tableView.getSortOrder().size() > 0)
+            {
+                sortcolumn = (TableColumn) tableView.getSortOrder().get(0);
+                st = sortcolumn.getSortType();
+                System.out.println(sortcolumn.toString() + "\t" + st.toString());
+            }*/
+            addEntry();
         }
+    }
+
+    void addEntry()
+    {
+        final ObservableList<ItemFormat> data = FXCollections.observableArrayList();
+        SortedList sortedList = new SortedList(data);
+
+        DecimalFormat df = new DecimalFormat("#.00");
+        for(int i = 0; i < getArrayList().size(); i++)
+        {
+            data.add(getArrayList().get(i));
+        }
+        tColumnValue.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("Value"));
+        tColumnSerial.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("SerialNumber"));
+        tColumnName.setCellValueFactory(new PropertyValueFactory<ItemFormat,String>("Name"));
+        tColumnValue.setCellFactory(TextFieldTableCell.forTableColumn());
+        tColumnSerial.setCellFactory(TextFieldTableCell.forTableColumn());
+        tColumnName.setCellFactory(TextFieldTableCell.forTableColumn());
+
+        tColumnValue.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<ItemFormat, String>>() {
+                                         @Override
+                                         public void handle(TableColumn.CellEditEvent<ItemFormat, String> event)
+                                         {
+                                             ItemFormat iF = event.getRowValue();
+                                             Double db = Double.parseDouble(event.getNewValue());
+                                             DecimalFormat df = new DecimalFormat("#.00");
+                                             iF.setValue(df.format(db));
+                                             tableView.refresh();
+                                         }
+                                     }
+        );
+        tColumnSerial.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<ItemFormat, String>>() {
+                                          @Override
+                                          public void handle(TableColumn.CellEditEvent<ItemFormat, String> event)
+                                          {
+                                              ItemFormat iF = event.getRowValue();
+                                              String str = event.getNewValue();
+                                              while(!verifySerialNumber(str, 0).equals(str))
+                                              {
+                                                  TextInputDialog alert = new TextInputDialog("XXXXXXXXXX");
+                                                  alert.setTitle("Invalid Serial Number");
+                                                  alert.setHeaderText("Invalid serial number entered");
+                                                  alert.setContentText("Please enter a valid serial number");
+                                                  Optional<String> result = alert.showAndWait();
+                                                  if(result.isPresent())
+                                                  {
+                                                      str = result.get();
+                                                  }
+                                              }
+                                              iF.setSerialNumber(str);
+                                              tableView.refresh();
+                                          }
+                                      }
+        );
+        tColumnName.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<ItemFormat, String>>() {
+                                        @Override
+                                        public void handle(TableColumn.CellEditEvent<ItemFormat, String> event)
+                                        {
+                                            ItemFormat iF = event.getRowValue();
+                                            iF.setName(event.getNewValue());
+                                            tableView.refresh();
+                                        }
+                                    }
+        );
+        tableView.setItems(data);
+        setTableEditable();
     }
 
     @FXML
@@ -231,18 +334,32 @@ public class InventoryController {
     {
         if(!searchInputField.getText().isEmpty())
         {
-            System.out.println(searchInputField.getText());
             for(int i = 0; i < getArrayList().size(); i++)
             {
                 if(searchInputField.getText().length() == 10)
                 {
-                    //System.out.println(searchInputField.getText() + " ?= " + getArrayList().get(i).getSerialNumber());
-                    if(searchInputField.getText().equals(getArrayList().get(i).getSerialNumber()))
+                    ItemFormat iF = (ItemFormat) tableView.getItems().get(i);
+                    if (searchInputField.getText().equals(iF.getSerialNumber()))
                     {
                         focusTableCell(i);
+                        break;
                     }
+                    searchName(i);
+                }
+                else
+                {
+                    searchName(i);
                 }
             }
+        }
+    }
+    private void searchName(int i)
+    {
+        ItemFormat iF = (ItemFormat) tableView.getItems().get(i);
+        if (searchInputField.getText().equals(iF.getName()))
+        {
+            focusTableCell(i);
+            return;
         }
     }
     private void focusTableCell(int i)
@@ -251,5 +368,15 @@ public class InventoryController {
         tableView.requestFocus();
         tableView.getSelectionModel().select(i);
         tableView.getFocusModel().focus(1);
+    }
+    @FXML
+    void importChoice()
+    {
+
+    }
+    @FXML
+    void exportChoice()
+    {
+
     }
 }
